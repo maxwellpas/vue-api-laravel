@@ -1,9 +1,19 @@
 <template>
-	<div class="container">
-		<modal-delete @delete="deletarProduto" titulo="Atenção! - MODAL DELETAR"></modal-delete>
-        <modal-edit></modal-edit>
-		<teste></teste>
-		<Dialog></Dialog>
+	<div class="container">		
+        <modal 
+				idmodal="modal-edit" 
+				titulo="Editar Dados - Modal EDITAR" 
+				texto="Hello From My Modal!">
+				</modal>
+		<modal 
+				idmodal="modal-delete" 
+				titulo="Deletando os daods- Modal EDITAR" 
+				texto="Hello From My Modal!"
+				tipo="deletar"
+				>
+				</modal>
+		
+		<p>Produto a ser deletado {{idProduto}}</p>
 		
 		<div class="row">
 			<div class="col-12">
@@ -32,7 +42,7 @@
 							<td>{{ prod.price }}</td>
 							<td class="text-center">
 								<button class="btn btn-secondary mr-1" :prodedit="prod.id" v-b-modal.modal-edit>edit</button>
-								<button class="btn btn-danger" v-b-modal.modal-delete>delete</button>
+								<button class="btn btn-danger" @click="produtoEscolher(prod.id)" v-b-modal.modal-delete>delete</button>
 							</td>
 						</tr>
 					</tbody>
@@ -56,7 +66,8 @@ export default {
 			info: null,
 			produtos: null,
 			token: null,
-			busca: ''
+			busca: '',
+			idProduto: ''
 		};
 	},
 	created() {
@@ -64,7 +75,8 @@ export default {
 	},
 	provide() {
 		return {
-			deletarProd: this.deletarProduto		
+			deletarProd: this.deletarProduto,
+			cancelarProduto: this.produtoCancelar		
 		};
 
 	},
@@ -123,10 +135,17 @@ export default {
 			});
 
 		},
-		deletarProduto() {
-			console.log('deletando arquivo ',this.proddel);
-			//console.log($('button[))
+		produtoEscolher(item) {
+			this.idProduto = item;			
+		},
+		produtoCancelar() {
+			this.idProduto = '';			
+			console.log('Cancelando o produto', this.idProduto);
+		},
+		deletarProduto(){
+			console.log(this.idProduto, 'delentando depois da confirmaçcão');
 		}
+
 	}
 }
 </script>
