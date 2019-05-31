@@ -1,6 +1,6 @@
 <template>  
     <div>
-        <modal-delete></modal-delete>
+        <modal-delete @delete="testeDeletar" titulo="Atenção! - MODAL DELETAR"></modal-delete>
         <modal-edit></modal-edit>
     </div>
 </template>
@@ -8,10 +8,14 @@
 <script>
 export default {
     methods: {
-        testemaster() {
-            alert('teste master');
+        testeDeletar(teste) {
+
+            console.log('veio no modal', teste)
         }
     }
+    
+    
+    
     
 }
 </script>

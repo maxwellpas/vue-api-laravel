@@ -1,6 +1,10 @@
 <template>
 	<div class="container">
-		<modal></modal>
+		<modal-delete @delete="deletarProduto" titulo="Atenção! - MODAL DELETAR"></modal-delete>
+        <modal-edit></modal-edit>
+		<teste></teste>
+		<Dialog></Dialog>
+		
 		<div class="row">
 			<div class="col-12">
 				<h1 class="text-center mt-5">API Laravel</h1>
@@ -27,7 +31,7 @@
 							<td>{{ prod.description }}</td>
 							<td>{{ prod.price }}</td>
 							<td class="text-center">
-								<button class="btn btn-secondary mr-1"  v-b-modal.modal-edit>edit</button>
+								<button class="btn btn-secondary mr-1" :prodedit="prod.id" v-b-modal.modal-edit>edit</button>
 								<button class="btn btn-danger" v-b-modal.modal-delete>delete</button>
 							</td>
 						</tr>
@@ -35,6 +39,9 @@
 				</table>
 			</div>
 		</div>
+
+
+
 	</div>
 </template>
 
@@ -43,6 +50,7 @@ import axios from 'axios';
 import _ from 'lodash';
 
 export default {
+	//props: ['proddel'],
 	data() {
 		return {
 			info: null,
@@ -53,6 +61,12 @@ export default {
 	},
 	created() {
 		this.login();	
+	},
+	provide() {
+		return {
+			deletarProd: this.deletarProduto		
+		};
+
 	},
 	computed: {
 		dadosSalvos() {			
@@ -108,6 +122,10 @@ export default {
 
 			});
 
+		},
+		deletarProduto() {
+			console.log('deletando arquivo ',this.proddel);
+			//console.log($('button[))
 		}
 	}
 }
