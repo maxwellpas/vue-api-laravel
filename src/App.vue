@@ -1,8 +1,10 @@
 <template>
 	<div class="container">
+		<modal></modal>
 		<div class="row">
 			<div class="col-12">
-				<h1 class="text-center mt-5 mb-5">API Laravel</h1>
+				<h1 class="text-center mt-5">API Laravel</h1>
+				<h4 class="text-center mb-5">Produtos - Listar</h4>
 			</div>
 		</div>
 		<div class="row">
@@ -25,8 +27,8 @@
 							<td>{{ prod.description }}</td>
 							<td>{{ prod.price }}</td>
 							<td class="text-center">
-								<button class="btn btn-secondary mr-1">edit</button>
-								<button class="btn btn-danger">delete</button>
+								<button class="btn btn-secondary mr-1"  v-b-modal.modal-edit>edit</button>
+								<button class="btn btn-danger" v-b-modal.modal-delete>delete</button>
 							</td>
 						</tr>
 					</tbody>
@@ -59,12 +61,10 @@ export default {
 				var busca = self.busca.toLowerCase(); // pega os dados dos campos				
                 return produtos.name.toLowerCase().indexOf(busca) >= 0;
             });
-
 		},
 	},
 	methods: {
-		login() {
-			
+		login() {			
 			axios({
 				method: 'post', // verbo http
 				url: 'http://localhost:8001/public/api/login', // url
@@ -82,8 +82,6 @@ export default {
 			})
 		},
 		buscaProdutos() {
-
-
 			let config = {
 				headers: {
 					'Authorization': 'Bearer ' + this.token
