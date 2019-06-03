@@ -36,12 +36,12 @@
 					</thead>
 					<tbody>
 						<tr v-for="(prod, indice) in dadosSalvos" v-bind:key="indice">
-							<th scope="row">{{ indice }}</th>
+							<th scope="row">{{ (prod.id) }}</th>
 							<td>{{ prod.name }}</td>
 							<td>{{ prod.description }}</td>
 							<td>{{ prod.price }}</td>
 							<td class="text-center">
-								<button class="btn btn-secondary mr-1" :prodedit="prod.id" v-b-modal.modal-edit>edit</button>
+								<button class="btn btn-secondary mr-1" @click="produtoEscolher(prod.id)" v-b-modal.modal-edit>edit</button>
 								<button class="btn btn-danger" @click="produtoEscolher(prod.id)" v-b-modal.modal-delete>delete</button>
 							</td>
 						</tr>
@@ -76,7 +76,8 @@ export default {
 	provide() {
 		return {
 			deletarProd: this.deletarProduto,
-			cancelarProduto: this.produtoCancelar		
+			cancelarProduto: this.produtoCancelar,
+			atualizarProduto: this.atualizarProduto		
 		};
 
 	},
@@ -90,6 +91,13 @@ export default {
 		},
 	},
 	methods: {
+		configHead() {
+			return {
+				headers: {
+					'Authorization': 'Bearer ' + this.token
+				}
+			}
+		},
 		login() {			
 			axios({
 				method: 'post', // verbo http
@@ -108,15 +116,7 @@ export default {
 			})
 		},
 		buscaProdutos() {
-			let config = {
-				headers: {
-					'Authorization': 'Bearer ' + this.token
-				}
-			}
-
-			// let bodyParameters = {
-			//     product: idProduct
-			// }
+			let config = this.configHead();
 
 			axios
 			.get(
@@ -136,14 +136,68 @@ export default {
 
 		},
 		produtoEscolher(item) {
-			this.idProduto = item;			
+			this.idProduto = item;
+
 		},
 		produtoCancelar() {
 			this.idProduto = '';			
 			console.log('Cancelando o produto', this.idProduto);
+
 		},
 		deletarProduto(){
-			console.log(this.idProduto, 'delentando depois da confirmaçcão');
+			let config = this.configHead();
+
+			let bodyParameters = {
+				"_method" : 'DELETE'
+			}
+
+			axios
+			.post(
+				'http://localhost:8001/public/api/products/' + this.idProduto,
+				bodyParameters,
+				config
+			)
+			.then( (response) => {
+				console.log(this.idProduto, 'delentando depois da confirmaçcão');				
+				this.buscaProdutos();
+				//this.produtos = response.data.data;
+
+			})
+			.catch( (error) => {
+				console.log(error);
+
+			});
+		},
+		atualizarProduto(name, price, description) {
+			//console.log('chegou no APP', name, price, description);			
+			
+			let config = this.configHead();
+
+			let bodyParameters = {
+				"_method": "PUT",
+				"name" : name,
+				"price": price,
+				"description": description
+			}
+
+			axios
+			.post(
+				'http://localhost:8001/public/api/products/' + this.idProduto,
+				bodyParameters,
+				config
+			)
+			.then( (response) => {
+				//console.log(this.idProduto, 'atualizando o produto');				
+				this.buscaProdutos();
+				
+				//this.$emit('atualizarProduto', 'ALTERADO MAX');
+				//this.produtos = response.data.data;
+
+			})
+			.catch( (error) => {
+				console.log(error);
+
+			});
 		}
 
 	}

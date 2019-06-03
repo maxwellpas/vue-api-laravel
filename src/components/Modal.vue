@@ -3,12 +3,38 @@
         <b-modal ref="my-modal" :id="idmodal" :title="titulo" hide-footer>            
             <div class="d-block text-center">
                 <h3>{{texto}}</h3>
+
+                
+                <form v-if="!tipo" ref="formAtualizar">
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="form-group text-left">
+                                <label for="nameProd">Nome</label>
+                                <input type="text" class="form-control" v-model="nameProd" placeholder="Entre com seu nome">
+                            </div>
+                            <div class="form-group text-left">
+                                <label for="priceProd">Preço</label>
+                                <input type="text" class="form-control" v-model="priceProd" placeholder="Entre com o preço">
+                            </div>
+                            <div class="form-group text-left">
+                                <label for="descriptionProd">Entre com a descrição</label>
+                                <textarea class="form-control" v-model="descriptionProd" rows="3"></textarea>
+                            </div>                
+                        </div>
+                    </div>
+                    {{ nameProd }}
+                    {{ priceProd }}
+                    {{ descriptionProd}}
+                    
+                </form>
+
             </div>
+            
 
             <div class="col-6 offset-6" v-if="!tipo">
                 <div class="row">
                     <b-button class="col-5 mt-3 mr-1" block @click="hideModal">Cancelar</b-button>
-                    <b-button class="col-5 mt-3 ml-1 btn-danger" block @click="showModal">Atualizar</b-button>
+                    <b-button class="col-5 mt-3 ml-1 btn-danger" block @click="atualizar">Atualizar</b-button>
                 </div>              
             </div>
 
@@ -29,9 +55,14 @@ export default {
 
     props: ['titulo', 'prod','idmodal', 'texto', 'tipo'],
     data(){
-        return {};
+        return {
+            nameProd: '1',
+            priceProd: '2',
+            descriptionProd: '33'
+
+        };
     },
-    inject: ['deletarProd', 'cancelarProduto'],    
+    inject: ['deletarProd', 'cancelarProduto', 'atualizarProduto'],    
     methods: {
         showModal() {
             this.$refs['my-modal'].show();
@@ -42,7 +73,14 @@ export default {
         },
         deletar() {
             this.deletarProd();            
+            this.hideModal();
             //this.$emit('delete', 'aqui vai vir algo')
+        },
+        atualizar() {         
+            console.log('primeiro passou no component modal',this.nameProd, this.priceProd, this.descriptionProd);
+            this.atualizarProduto(this.nameProd, this.priceProd, this.descriptionProd);
+            this.hideModal();
+            //console.log(ret, ' resposta ');
         },
         cancelar() {
             this.cancelarProduto();
