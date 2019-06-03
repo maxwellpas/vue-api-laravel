@@ -19,6 +19,7 @@
 				idmodal="modal-criar" 
 				titulo="Criando Produtos- Modal CRIAR" 
 				texto="Preencha os campos abaixo para criar o produto."
+				dados=""
 				tipo="criar"
 				>
 				</modal>				
@@ -65,6 +66,7 @@
 						</tr>
 					</tbody>
 				</table>
+
 			</div>
 		</div>
 
@@ -112,10 +114,7 @@ export default {
 	methods: {
 		configHead() {
 			return {
-				headers: {
-					//'Access-Control-Allow-Origin': '*',
-					//'Access-Control-Allow-Methods': 'GET, POST, PATCH, PUT, DELETE, OPTIONS',
-					//'Access-Control-Allow-Headers': 'Origin, Content-Type, X-Auth-Token',
+				headers: {					
 					'Authorization': 'Bearer ' + this.token
 				}
 			}

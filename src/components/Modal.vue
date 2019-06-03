@@ -60,7 +60,7 @@
 export default {
     
 
-    props: ['titulo', 'prod','idmodal', 'texto', 'tipo'],
+    props: ['titulo', 'prod','idmodal', 'texto', 'tipo', 'dados'],
     data(){
         return {
             nameProd: '',
