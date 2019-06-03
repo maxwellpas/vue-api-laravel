@@ -3,15 +3,25 @@
         <modal 
 				idmodal="modal-edit" 
 				titulo="Editar Dados - Modal EDITAR" 
-				texto="Hello From My Modal!">
+				texto="Atenção ao alterar o produto"
+				tipo="editar"
+				>
 				</modal>
 		<modal 
 				idmodal="modal-delete" 
-				titulo="Deletando os daods- Modal EDITAR" 
-				texto="Hello From My Modal!"
+				titulo="Deletando os dados- Modal DELETE" 
+				texto="Atenção! Tenha certeza que deseja excluir esse produto?"
 				tipo="deletar"
 				>
 				</modal>
+
+		<modal 
+				idmodal="modal-criar" 
+				titulo="Criando Produtos- Modal CRIAR" 
+				texto="Preencha os campos abaixo para criar o produto."
+				tipo="criar"
+				>
+				</modal>				
 		
 		<p>Produto a ser deletado {{idProduto}}</p>
 		
@@ -22,8 +32,16 @@
 			</div>
 		</div>
 		<div class="row">
-			<div class="col-12">		
+			<div class="col-8">
 				<p><input type="text" class="form-control" v-model="busca" placeholder="Digite aqui para fazer sua busca do poduto" ></p>
+			</div>
+			<div class="col-4">
+				<button class="btn btn-secondary" v-b-modal.modal-criar>Novo cadastro</button>
+			</div>	
+		</div>
+		<div class="row">
+			<div class="col-12">		
+				
 				<table class="table table-striped">
 					<thead>
 						<tr>
@@ -77,7 +95,8 @@ export default {
 		return {
 			deletarProd: this.deletarProduto,
 			cancelarProduto: this.produtoCancelar,
-			atualizarProduto: this.atualizarProduto		
+			atualizarProduto: this.atualizarProduto,
+			criarProduto: this.criarProduto		
 		};
 
 	},
@@ -94,9 +113,13 @@ export default {
 		configHead() {
 			return {
 				headers: {
+					//'Access-Control-Allow-Origin': '*',
+					//'Access-Control-Allow-Methods': 'GET, POST, PATCH, PUT, DELETE, OPTIONS',
+					//'Access-Control-Allow-Headers': 'Origin, Content-Type, X-Auth-Token',
 					'Authorization': 'Bearer ' + this.token
 				}
 			}
+			
 		},
 		login() {			
 			axios({
@@ -198,6 +221,40 @@ export default {
 				console.log(error);
 
 			});
+		},
+		criarProduto(name, price, description) {
+			let config = this.configHead();
+
+			let bodyParameters = {
+				//"_method": "POST",
+				"name" : name,
+				"price": price,
+				"description": description
+			}
+
+			console.log(config, bodyParameters);
+
+
+			axios
+			.post(
+				'http://localhost:8001/public/api/products',
+				bodyParameters,
+				config
+			)
+			.then( (response) => {
+				console.log('Produto criado | APP');				
+				this.buscaProdutos();
+				
+				//this.$emit('atualizarProduto', 'ALTERADO MAX');
+				//this.produtos = response.data.data;
+
+			})
+			.catch( (error) => {
+				console.log(error);
+
+			});
+
+
 		}
 
 	}
