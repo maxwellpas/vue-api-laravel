@@ -45,10 +45,13 @@
 				
 				<table class="table table-striped">
 					<thead>
-						<tr>
-							<th scope="col">#</th>
-							<th scope="col">Name</th>
-							<th scope="col">Description</th>
+						<tr>							
+							<th scope="col" v-for="(coluna, indice) in ordem.colunas" v-bind:key="indice">
+								<a href="#" @click.prevent="ordenar(indice)">
+									{{ coluna | ucwords}}
+								</a>
+							</th>
+							
 							<th scope="col">Price</th>
 							<th scope="col" class="text-center">Actions</th>
 						</tr>
@@ -87,7 +90,11 @@ export default {
 			produtos: null,
 			token: null,
 			busca: '',
-			idProduto: ''
+			idProduto: '',
+			ordem: {
+                colunas: ['id', 'name', 'description'],
+                orientacao: ['desc', 'desc', 'desc']
+            }
 		};
 	},
 	created() {
@@ -105,13 +112,19 @@ export default {
 	computed: {
 		dadosSalvos() {			
 			let self = this;
-			return _.filter(this.produtos, function(produtos) {				
+			return _.filter(this.dadosOrdenados, function(produtos) {				
 				var busca = self.busca.toLowerCase(); // pega os dados dos campos				
                 return produtos.name.toLowerCase().indexOf(busca) >= 0;
             });
 		},
+		dadosOrdenados() {
+            return _.orderBy(this.produtos, this.ordem.colunas, this.ordem.orientacao);
+        }
 	},
 	methods: {
+		ordenar(indice) {
+            this.$set(this.ordem.orientacao, indice, this.ordem.orientacao[indice] == 'desc' ? 'asc' : 'desc')
+        },
 		configHead() {
 			return {
 				headers: {					
