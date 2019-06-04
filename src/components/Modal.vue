@@ -56,6 +56,9 @@
 </template>
 
 <script>
+
+import store from '../store';
+
 export default {
     
 
@@ -68,6 +71,9 @@ export default {
             descriptionProd: ''
 
         };
+    },
+    computed: {
+       
     },
     beforeMount() {
 		console.log('before mount', this)

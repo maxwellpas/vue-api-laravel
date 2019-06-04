@@ -87,12 +87,12 @@
 <script>
 import axios from 'axios';
 import _ from 'lodash';
+import store from './store';
 
 export default {
 	//props: ['proddel'],
 	data() {
-		return {
-			loading: true,
+		return {			
 			info: null,
 			produtos: null,
 			token: null,
@@ -109,11 +109,10 @@ export default {
 		};
 	},
 	created() {
-		this.login();	
+		store.commit('login');	
 	},	
 	provide() {
 		return {};
-
 	},
 	computed: {
 		dadosSalvos() {			
@@ -125,12 +124,16 @@ export default {
 		},
 		dadosOrdenados() {
             return _.orderBy(this.produtos, this.ordem.colunas, this.ordem.orientacao);
-        }
+		},		
+		loading() {
+			console.log(store.state.loading);
+		}
 	},
 	methods: {
 		ordenar(indice) {
             this.$set(this.ordem.orientacao, indice, this.ordem.orientacao[indice] == 'desc' ? 'asc' : 'desc')
-        },
+		},
+		/*
 		configHead() {
 			return {
 				headers: {					
@@ -181,6 +184,7 @@ export default {
 			});
 
 		},
+		*/
 		buscaProdutosPorId() {
 			let config = this.configHead();
 			
