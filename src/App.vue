@@ -112,12 +112,7 @@ export default {
 		this.login();	
 	},	
 	provide() {
-		return {
-			deletarProd: this.deletarProduto,
-			cancelarProduto: this.produtoCancelar,
-			atualizarProduto: this.atualizarProduto,
-			criarProduto: this.criarProduto		
-		};
+		return {};
 
 	},
 	computed: {
@@ -173,8 +168,7 @@ export default {
 				// bodyParameters,
 				config
 			)
-			.then( (response) => {
-				console.log(response.data.data);
+			.then( (response) => {				
 				this.produtos = response.data.data;
 
 			})
@@ -249,6 +243,7 @@ export default {
 				console.log(this.idProduto, 'delentando depois da confirmaçcão');				
 				this.buscaProdutos();
 				//this.produtos = response.data.data;
+				//this.$emit('deletar', true);
 
 			})
 			.catch( (error) => {
