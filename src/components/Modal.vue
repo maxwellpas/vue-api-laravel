@@ -25,6 +25,8 @@
                     {{ nameProd }}
                     {{ priceProd }}
                     {{ descriptionProd }}     
+                    {{ dados }}     
+                        
 
                 </form>
 

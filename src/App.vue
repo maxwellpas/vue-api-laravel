@@ -48,7 +48,7 @@
 						<tr>							
 							<th scope="col" v-for="(coluna, indice) in ordem.colunas" v-bind:key="indice">
 								<a href="#" @click.prevent="ordenar(indice)">
-									{{ coluna | ucwords}}
+									{{ coluna }}
 								</a>
 							</th>
 							
@@ -114,7 +114,7 @@ export default {
 			let self = this;
 			return _.filter(this.dadosOrdenados, function(produtos) {				
 				var busca = self.busca.toLowerCase(); // pega os dados dos campos				
-                return produtos.name.toLowerCase().indexOf(busca) >= 0;
+                return (produtos.name.toLowerCase().indexOf(busca) >= 0) || (produtos.description.toLowerCase().indexOf(busca) >= 0);
             });
 		},
 		dadosOrdenados() {
@@ -171,7 +171,7 @@ export default {
 
 		},
 		produtoEscolher(item) {
-			this.idProduto = item;
+			this.idProduto = item;			
 
 		},
 		produtoCancelar() {
