@@ -1,25 +1,27 @@
-<template>
+<template>	
 	<div class="container">		
-        <modal 
+		<modal 
 				idmodal="modal-edit" 
 				titulo="Editar Dados - Modal EDITAR" 
 				texto="Atenção ao alterar o produto"
 				tipo="editar"
+				:nameProd="nameProd"
+				:priceProd="priceProd"
+				:descriptionProd="descriptionProd"
 				>
 				</modal>
 		<modal 
 				idmodal="modal-delete" 
 				titulo="Deletando os dados- Modal DELETE" 
 				texto="Atenção! Tenha certeza que deseja excluir esse produto?"
-				tipo="deletar"
+				tipo="deletar"					
 				>
 				</modal>
 
 		<modal 
 				idmodal="modal-criar" 
 				titulo="Criando Produtos- Modal CRIAR" 
-				texto="Preencha os campos abaixo para criar o produto."
-				dados=""
+				texto="Preencha os campos abaixo para criar o produto."				
 				tipo="criar"
 				>
 				</modal>				
@@ -37,13 +39,17 @@
 				<p><input type="text" class="form-control" v-model="busca" placeholder="Digite aqui para fazer sua busca do poduto" ></p>
 			</div>
 			<div class="col-4">
-				<button class="btn btn-secondary" v-b-modal.modal-criar>Novo cadastro</button>
+				<button :disabled="loading" class="btn btn-secondary" v-b-modal.modal-criar>Novo cadastro</button>
 			</div>	
 		</div>
 		<div class="row">
 			<div class="col-12">		
+
+				<div v-if="loading" class="container">
+					<h1>Carregando...</h1>
+				</div>
 				
-				<table class="table table-striped">
+				<table v-else class="table table-striped">
 					<thead>
 						<tr>							
 							<th scope="col" v-for="(coluna, indice) in ordem.colunas" v-bind:key="indice">
@@ -63,7 +69,7 @@
 							<td>{{ prod.description }}</td>
 							<td>{{ prod.price }}</td>
 							<td class="text-center">
-								<button class="btn btn-secondary mr-1" @click="produtoEscolher(prod.id)" v-b-modal.modal-edit>edit</button>
+								<button class="btn btn-secondary mr-1" @click="produtoEscolherEdit(prod.id)" v-b-modal.modal-edit>edit</button>
 								<button class="btn btn-danger" @click="produtoEscolher(prod.id)" v-b-modal.modal-delete>delete</button>
 							</td>
 						</tr>
@@ -75,7 +81,7 @@
 
 
 
-	</div>
+	</div>	
 </template>
 
 <script>
@@ -86,6 +92,7 @@ export default {
 	//props: ['proddel'],
 	data() {
 		return {
+			loading: true,
 			info: null,
 			produtos: null,
 			token: null,
@@ -94,12 +101,16 @@ export default {
 			ordem: {
                 colunas: ['id', 'name', 'description'],
                 orientacao: ['desc', 'desc', 'desc']
-            }
+			},
+			nameProd: '',
+			priceProd: '',
+			descriptionProd: ''
+			
 		};
 	},
 	created() {
 		this.login();	
-	},
+	},	
 	provide() {
 		return {
 			deletarProd: this.deletarProduto,
@@ -144,6 +155,9 @@ export default {
 			})
 			.then(response => {
 				this.token = response.data.token;
+				
+			})
+			.finally(() => {
 				this.buscaProdutos();
 			})
 			.catch(error => {
@@ -164,14 +178,53 @@ export default {
 				this.produtos = response.data.data;
 
 			})
+			.finally(() => {
+				this.loading = false;
+			})
 			.catch( (error) => {
-				console.log(error);
+				console.log("Erro ao buscar os produtos", error);
+
+			});
+
+		},
+		buscaProdutosPorId() {
+			let config = this.configHead();
+			
+			/*let bodyParameters = {
+				"product": this.idProduto
+			}*/
+
+			axios
+			.get(
+				'http://localhost:8001/public/api/products/' + this.idProduto,
+				//bodyParameters,
+				config
+			)
+			.then( (response) => {
+				console.log(response.data.data, "trouxe o prodotuo por id");
+				this.nameProd = response.data.data.name;
+				this.priceProd = response.data.data.price;
+				this.descriptionProd = response.data.data.description;
+
+				console.log(this.nameProd);
+
+			})
+			.finally(() => {
+				this.loading = false;
+			})
+			.catch( (error) => {
+				console.log("Erro ao buscar os produtos", error);
 
 			});
 
 		},
 		produtoEscolher(item) {
 			this.idProduto = item;			
+
+		},
+		produtoEscolherEdit(item) {
+			this.idProduto = item;
+			this.buscaProdutosPorId();
 
 		},
 		produtoCancelar() {

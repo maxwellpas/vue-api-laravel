@@ -22,10 +22,7 @@
                         </div>
                     </div>
 
-                    {{ nameProd }}
-                    {{ priceProd }}
-                    {{ descriptionProd }}     
-                    {{ dados }}     
+                    
                         
 
                 </form>
@@ -62,7 +59,8 @@
 export default {
     
 
-    props: ['titulo', 'prod','idmodal', 'texto', 'tipo', 'dados'],
+    props: [
+        'titulo', 'prod','idmodal', 'texto', 'tipo', 'dados', 'nameProd', 'descriptionProd', 'priceProd'],
     data(){
         return {
             nameProd: '',
@@ -71,11 +69,15 @@ export default {
 
         };
     },
+    beforeMount() {
+		console.log('before mount', this)
+	},
     inject: ['deletarProd', 'cancelarProduto', 'atualizarProduto','criarProduto'],    
     methods: {
         showModal() {
             this.$refs['my-modal'].show();
             //console.log('modal do deletar');
+            
         },
         hideModal() {
             this.$refs['my-modal'].hide()            
