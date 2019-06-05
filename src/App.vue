@@ -109,7 +109,8 @@ export default {
 		};
 	},
 	created() {
-		store.commit('login');	
+		store.dispatch('login');	
+		console.log('created app', produtos);
 	},	
 	provide() {
 		return {};
@@ -123,10 +124,13 @@ export default {
             });
 		},
 		dadosOrdenados() {
-            return _.orderBy(this.produtos, this.ordem.colunas, this.ordem.orientacao);
+            return _.orderBy(this.dadosApi, this.ordem.colunas, this.ordem.orientacao);
 		},		
 		loading() {
-			console.log(store.state.loading);
+			return store.state.loading;
+		},
+		dadosApi(){			
+			return store.getters.dadosApi;
 		}
 	},
 	methods: {
