@@ -1,5 +1,6 @@
 <template>	
-	<div class="container">		
+	<div class="container">	
+		
 		<modal 
 				idmodal="modal-edit" 
 				titulo="Editar Dados - Modal EDITAR" 
@@ -14,7 +15,10 @@
 				idmodal="modal-delete" 
 				titulo="Deletando os dados- Modal DELETE" 
 				texto="Atenção! Tenha certeza que deseja excluir esse produto?"
-				tipo="deletar"					
+				tipo="deletar"	
+				:nameProd="nameProd"
+				:priceProd="priceProd"
+				:descriptionProd="descriptionProd"				
 				>
 				</modal>
 
@@ -23,10 +27,13 @@
 				titulo="Criando Produtos- Modal CRIAR" 
 				texto="Preencha os campos abaixo para criar o produto."				
 				tipo="criar"
+				:nameProd="nameProd"
+				:priceProd="priceProd"
+				:descriptionProd="descriptionProd"
 				>
-				</modal>				
+				</modal>
+
 		
-		<p>Produto a ser deletado {{idProduto}}</p>
 		
 		<div class="row">
 			<div class="col-12">
@@ -69,8 +76,8 @@
 							<td>{{ prod.description }}</td>
 							<td>{{ prod.price }}</td>
 							<td class="text-center">
-								<button class="btn btn-secondary mr-1" @click="produtoEscolherEdit(prod.id)" v-b-modal.modal-edit>edit</button>
-								<button class="btn btn-danger" @click="produtoEscolher(prod.id)" v-b-modal.modal-delete>delete</button>
+								<button class="btn btn-secondary mr-1" @click="escolherEdit(prod.id)" v-b-modal.modal-edit>edit</button>
+								<button class="btn btn-danger" @click="escolherId(prod.id)" v-b-modal.modal-delete>delete</button>
 							</td>
 						</tr>
 					</tbody>
@@ -87,33 +94,30 @@
 <script>
 import axios from 'axios';
 import _ from 'lodash';
+import store from './store/store';
+
+import { mapActions } from 'vuex'
 
 export default {
 	//props: ['proddel'],
 	data() {
-		return {
-			loading: true,
+		return {			
 			info: null,
-			produtos: null,
-			token: null,
-			busca: '',
+			busca: '',		
 			idProduto: '',
 			ordem: {
                 colunas: ['id', 'name', 'description'],
                 orientacao: ['desc', 'desc', 'desc']
-			},
-			nameProd: '',
-			priceProd: '',
-			descriptionProd: ''
-			
+			}			
 		};
 	},
 	created() {
-		this.login();	
+		store.dispatch('login');	
+		///this.login();
+		//console.log('created app', produtos);
 	},	
 	provide() {
 		return {};
-
 	},
 	computed: {
 		dadosSalvos() {			
@@ -124,198 +128,54 @@ export default {
             });
 		},
 		dadosOrdenados() {
-            return _.orderBy(this.produtos, this.ordem.colunas, this.ordem.orientacao);
-        }
+            return _.orderBy(this.dadosApi, this.ordem.colunas, this.ordem.orientacao);
+		},		
+		loading() {
+			return store.state.loading;
+		},
+		dadosApi(){	
+			console.log('veio no dadosApi todos os produtos')
+			if(store.state.dadosApi == ""){
+				return store.dispatch('buscaProdutos'); 
+			}
+			
+			return store.state.dadosApi;				
+		},
+		nameProd: () => store.state.produto.name,
+		priceProd: () => store.state.produto.price,
+		descriptionProd: () => store.state.produto.description,
+		
+		
 	},
 	methods: {
+		
+		...mapActions([
+			'buscaProdutos', 
+			'buscaProdutosPorId', 
+			'produtoEscolher', 
+			'produtoEscolherEdit', 
+			'produtoCancelar', 
+			'deletarProduto',
+			'atualizarProduto',
+			'criarProduto'
+		]),
+		
+		escolherEdit(payload) {
+			console.log('escolehr edit',payload);	
+			this.produtoEscolherEdit(payload);
+		},
+		escolherId(payload) {
+			console.log('escolehr delete',payload);	
+			store.commit('SET_PRODUTO_ID', payload);
+			//this.deletarProduto(payload);
+		},
+		escolherDelete(payload) {
+			console.log('escolehr delete',payload);	
+			//this.deletarProduto(payload);
+		},
 		ordenar(indice) {
             this.$set(this.ordem.orientacao, indice, this.ordem.orientacao[indice] == 'desc' ? 'asc' : 'desc')
-        },
-		configHead() {
-			return {
-				headers: {					
-					'Authorization': 'Bearer ' + this.token
-				}
-			}
-			
 		},
-		login() {			
-			axios({
-				method: 'post', // verbo http
-				url: 'http://localhost:8001/public/api/login', // url
-				data: {
-					email: 'user@user.com',
-					password: 'secret'
-				}
-			})
-			.then(response => {
-				this.token = response.data.token;
-				
-			})
-			.finally(() => {
-				this.buscaProdutos();
-			})
-			.catch(error => {
-				console.log("Erro ao fazer login", error)
-			})
-		},
-		buscaProdutos() {
-			let config = this.configHead();
-
-			axios
-			.get(
-				'http://localhost:8001/public/api/products',
-				// bodyParameters,
-				config
-			)
-			.then( (response) => {				
-				this.produtos = response.data.data;
-
-			})
-			.finally(() => {
-				this.loading = false;
-			})
-			.catch( (error) => {
-				console.log("Erro ao buscar os produtos", error);
-
-			});
-
-		},
-		buscaProdutosPorId() {
-			let config = this.configHead();
-			
-			/*let bodyParameters = {
-				"product": this.idProduto
-			}*/
-
-			axios
-			.get(
-				'http://localhost:8001/public/api/products/' + this.idProduto,
-				//bodyParameters,
-				config
-			)
-			.then( (response) => {
-				console.log(response.data.data, "trouxe o prodotuo por id");
-				this.nameProd = response.data.data.name;
-				this.priceProd = response.data.data.price;
-				this.descriptionProd = response.data.data.description;
-
-				console.log(this.nameProd);
-
-			})
-			.finally(() => {
-				this.loading = false;
-			})
-			.catch( (error) => {
-				console.log("Erro ao buscar os produtos", error);
-
-			});
-
-		},
-		produtoEscolher(item) {
-			this.idProduto = item;			
-
-		},
-		produtoEscolherEdit(item) {
-			this.idProduto = item;
-			this.buscaProdutosPorId();
-
-		},
-		produtoCancelar() {
-			this.idProduto = '';			
-			console.log('Cancelando o produto', this.idProduto);
-
-		},
-		deletarProduto(){
-			let config = this.configHead();
-
-			let bodyParameters = {
-				"_method" : 'DELETE'
-			}
-
-			axios
-			.post(
-				'http://localhost:8001/public/api/products/' + this.idProduto,
-				bodyParameters,
-				config
-			)
-			.then( (response) => {
-				console.log(this.idProduto, 'delentando depois da confirmaçcão');				
-				this.buscaProdutos();
-				//this.produtos = response.data.data;
-				//this.$emit('deletar', true);
-
-			})
-			.catch( (error) => {
-				console.log(error);
-
-			});
-		},
-		atualizarProduto(name, price, description) {
-			//console.log('chegou no APP', name, price, description);			
-			
-			let config = this.configHead();
-
-			let bodyParameters = {
-				"_method": "PUT",
-				"name" : name,
-				"price": price,
-				"description": description
-			}
-
-			axios
-			.post(
-				'http://localhost:8001/public/api/products/' + this.idProduto,
-				bodyParameters,
-				config
-			)
-			.then( (response) => {
-				//console.log(this.idProduto, 'atualizando o produto');				
-				this.buscaProdutos();
-				
-				//this.$emit('atualizarProduto', 'ALTERADO MAX');
-				//this.produtos = response.data.data;
-
-			})
-			.catch( (error) => {
-				console.log(error);
-
-			});
-		},
-		criarProduto(name, price, description) {
-			let config = this.configHead();
-
-			let bodyParameters = {
-				//"_method": "POST",
-				"name" : name,
-				"price": price,
-				"description": description
-			}
-
-			console.log(config, bodyParameters);
-
-
-			axios
-			.post(
-				'http://localhost:8001/public/api/products',
-				bodyParameters,
-				config
-			)
-			.then( (response) => {
-				console.log('Produto criado | APP');				
-				this.buscaProdutos();
-				
-				//this.$emit('atualizarProduto', 'ALTERADO MAX');
-				//this.produtos = response.data.data;
-
-			})
-			.catch( (error) => {
-				console.log(error);
-
-			});
-
-
-		}
 
 	}
 }
