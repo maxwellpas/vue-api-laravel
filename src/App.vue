@@ -76,7 +76,7 @@
 							<td>{{ prod.description }}</td>
 							<td>{{ prod.price }}</td>
 							<td class="text-center">
-								<button class="btn btn-secondary mr-1" @click="produtoEscolherEdit(prod.id)" v-b-modal.modal-edit>edit</button>
+								<button class="btn btn-secondary mr-1" @click="escolherEdit(prod.id)" v-b-modal.modal-edit>edit</button>
 								<button class="btn btn-danger" @click="produtoEscolher(prod.id)" v-b-modal.modal-delete>delete</button>
 							</td>
 						</tr>
@@ -134,10 +134,11 @@ export default {
 			return store.state.loading;
 		},
 		dadosApi(){	
+			console.log('veio no dadosApi todos os produtos')
 			if(store.state.dadosApi == ""){
 				return store.dispatch('buscaProdutos'); 
 			}
-
+			
 			return store.state.dadosApi;				
 		},
 		nameProd: () => store.state.produto.name,
@@ -147,7 +148,7 @@ export default {
 		
 	},
 	methods: {
-		/**
+		
 		...mapActions([
 			'buscaProdutos', 
 			'buscaProdutosPorId', 
@@ -158,10 +159,10 @@ export default {
 			'atualizarProduto',
 			'criarProduto'
 		]),
-		 */
-		produtoEscolherEdit(payload) {
-			console.log(payload);	
-			store.dispatch('produtoEscolherEdit', payload);
+		
+		escolherEdit(payload) {
+			console.log('escolehr edit',payload);	
+			this.produtoEscolherEdit(payload);
 		},
 		ordenar(indice) {
             this.$set(this.ordem.orientacao, indice, this.ordem.orientacao[indice] == 'desc' ? 'asc' : 'desc')

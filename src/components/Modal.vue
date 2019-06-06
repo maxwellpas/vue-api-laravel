@@ -9,15 +9,15 @@
                         <div class="col-12">
                             <div class="form-group text-left">
                                 <label for="nameProd">Nome</label>
-                                <input type="text" class="form-control" v-model="nameProd" placeholder="Entre com seu nome">
+                                <input type="text" class="form-control" v-model="produto.name" placeholder="Entre com seu nome">
                             </div>
                             <div class="form-group text-left">
                                 <label for="priceProd">Preço</label>
-                                <input type="text" class="form-control" v-model="priceProd" placeholder="Entre com o preço">
+                                <input type="text" class="form-control" v-model="produto.price" placeholder="Entre com o preço">
                             </div>
                             <div class="form-group text-left">
                                 <label for="descriptionProd">Entre com a descrição</label>
-                                <textarea class="form-control" v-model="descriptionProd" rows="3"></textarea>
+                                <textarea class="form-control" v-model="produto.description" rows="3"></textarea>
                             </div>                
                         </div>
                     </div>
@@ -57,8 +57,9 @@
 
 <script>
 
+import { mapActions, mapState } from 'vuex'
 import store from '../store/store';
-import { mapActions } from 'vuex'
+
 
 export default {
     
@@ -66,16 +67,12 @@ export default {
     props: [
         'titulo', 'prod','idmodal', 'texto', 'tipo', 'dados'],
     data(){
-        return {
-            nameProd: '',
-            priceProd: '',
-            descriptionProd: ''
-        };
+        return {};
     },
     computed: {
-        name: state => store.state.produto.name,
-        description: state => store.state.produto.description,
-        price: state => store.state.produto.price       
+        ...mapState({
+            produto: state => state.produto // foi mapeado do state do store e deopis chamado direto do formulário
+        }),      
     },
     beforeMount() {
 		//console.log('before mount', this)
@@ -85,15 +82,11 @@ export default {
     */
     methods: {
     
-        ...mapActions([
-			'buscaProdutos', 
-			'buscaProdutosPorId', 
-			'produtoEscolher', 
-			'produtoEscolherEdit'
-			//'produtoCancelar', 
-			//'deletarProduto',
-			//'atualizarProduto',
-//			'criarProduto'
+        ...mapActions([	
+			'deletarProduto',
+            'atualizarProduto',
+            'produtoCancelar', 
+			'criarProduto'
         ]),
     
         showModal() {
@@ -106,23 +99,25 @@ export default {
         },
         
         deletar() {
-            store.dispatch('deletarProduto');            
+            this.deletarProduto();
+            //store.dispatch('deletarProduto');            
             this.hideModal();
             //this.$emit('delete', 'aqui vai vir algo')
         },
+        
         atualizar() {         
             //console.log('primeiro passou no component modal',this.nameProd, this.priceProd, this.descriptionProd);
-            store.dispatch('atualizarProduto', state.produto.name, state.produto.price, state.produto.description);
+            this.atualizarProduto();
             this.hideModal();
             //console.log(ret, ' resposta ');
         },
         cancelar() {
-            store.dispatch('produtoCancelar');
+            this.produtoCancelar();
             this.hideModal();
         },
         criar() {
             //console.log('chamou o criar');
-            store.dispatch('criarProduto', state.produto.name, state.produto.price, state.produto.description);
+            this.criarProduto(state.produto.name, state.produto.price, state.produto.description);
             this.hideModal();
             //console.log('criado o produto');
         }      
