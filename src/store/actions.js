@@ -21,10 +21,10 @@ export default {
             
         })
         .finally((context) => {
-            console.log('chamou o login - na action');
+            //console.log('chamou o login - na action');
             context.dispatch('buscaProdutos');            
             
-            console.log('chamou o buscaProd - na action');
+            //console.log('chamou o buscaProd - na action');
         })
         .catch(error => {
             console.log("Erro ao fazer login", error)
@@ -102,14 +102,14 @@ export default {
 
     },
     deletarProduto(context){
-        
+            
         let bodyParameters = {
             "_method" : 'DELETE'
         }
 
         axios
         .post(
-            'http://localhost:8001/public/api/products/' + context.state.produtos.id,
+            'http://localhost:8001/public/api/products/' + context.state.produto.id,
             bodyParameters,
             {
                 headers: {					
@@ -118,8 +118,8 @@ export default {
             }
         )
         .then( (response) => {
-            //console.log(this.idProduto, 'delentando depois da confirmaçcão');				
-            context.dispatch('buscaProdutos');
+           // console.log('delentando depois da confirmaçcão', response);				
+            return context.dispatch('buscaProdutos');
             //this.produtos = response.data.data;
             //this.$emit('deletar', true);
 
@@ -129,8 +129,8 @@ export default {
 
         });
     },
-    atualizarProduto(context) {
-        console.log('chegou no APP', context.state.produto);			        
+    atualizarProduto(context, callback) {
+        //console.log('chegou no APP', context.state.produto);			        
 
         let bodyParameters = {
             "_method": "PUT",
@@ -150,7 +150,8 @@ export default {
             }
         )
         .then( (response) => {
-            console.log('atualizando o produto');				
+            callback(true);
+            //console.log('atualizando o produto');				
             return context.dispatch('buscaProdutos');
             
             //this.$emit('atualizarProduto', 'ALTERADO MAX');
@@ -158,21 +159,24 @@ export default {
 
         })
         .catch( (error) => {
+            callback(false);
             console.log(error);
 
         });
     },
-    criarProduto(name, price, description) {
+    criarProduto(context, callback) {
         //let config = this.configHead();
 
+        //console.log(context.state.produto);
+
         let bodyParameters = {
-            //"_method": "POST",
-            "name" : name,
-            "price": price,
-            "description": description
+           // "_method": "POST",
+            "name" : context.state.produto.name,
+            "price": context.state.produto.price,
+            "description": context.state.produto.description
         }
 
-        console.log(config, bodyParameters);
+        //console.log(bodyParameters);
 
 
         axios
@@ -185,16 +189,16 @@ export default {
                 }
             }
         )
-        .then( (response) => {
-            console.log('Produto criado | APP');				
-            context.dispatch('buscaProdutos');
-            
-            //this.$emit('atualizarProduto', 'ALTERADO MAX');
-            //this.produtos = response.data.data;
+        .then( () => {          
+            callback(true);
+            return context.dispatch('buscaProdutos');
+          
 
         })
-        .catch( (error) => {
-            console.log(error);
+        .catch( (error) => { 
+            callback(false);
+            console.log(error, 'erro ao criarProduto');
+            
 
         });
 

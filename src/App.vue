@@ -33,7 +33,7 @@
 				>
 				</modal>
 
-		<p>Produto a ser deletado {{idProduto}}</p>
+		
 		
 		<div class="row">
 			<div class="col-12">
@@ -77,7 +77,7 @@
 							<td>{{ prod.price }}</td>
 							<td class="text-center">
 								<button class="btn btn-secondary mr-1" @click="escolherEdit(prod.id)" v-b-modal.modal-edit>edit</button>
-								<button class="btn btn-danger" @click="produtoEscolher(prod.id)" v-b-modal.modal-delete>delete</button>
+								<button class="btn btn-danger" @click="escolherId(prod.id)" v-b-modal.modal-delete>delete</button>
 							</td>
 						</tr>
 					</tbody>
@@ -163,6 +163,15 @@ export default {
 		escolherEdit(payload) {
 			console.log('escolehr edit',payload);	
 			this.produtoEscolherEdit(payload);
+		},
+		escolherId(payload) {
+			console.log('escolehr delete',payload);	
+			store.commit('SET_PRODUTO_ID', payload);
+			//this.deletarProduto(payload);
+		},
+		escolherDelete(payload) {
+			console.log('escolehr delete',payload);	
+			//this.deletarProduto(payload);
 		},
 		ordenar(indice) {
             this.$set(this.ordem.orientacao, indice, this.ordem.orientacao[indice] == 'desc' ? 'asc' : 'desc')

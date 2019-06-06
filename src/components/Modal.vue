@@ -22,32 +22,34 @@
                         </div>
                     </div>
 
-                    
-                        
-
                 </form>
 
             </div>
             
-
+            <div class="col-12" v-if='respostaText'>
+                <div :class="respostaCss" role="alert">
+                    {{ respostaText }}
+                </div>
+                
+            </div>
             <div class="col-6 offset-6" v-if="tipo == 'criar'">
                 <div class="row">
-                    <b-button class="col-5 mt-3 mr-1" block @click="cancelar">Cancelar</b-button>
-                    <b-button class="col-5 mt-3 ml-1 btn-danger" block @click="criar">Criar</b-button>
+                    <b-button class="col-5 mt-3 mr-1" block @click="cancelar" :disabled="desabilitar">Cancelar</b-button>
+                    <b-button class="col-5 mt-3 ml-1 btn-danger" block @click="criar" :disabled="desabilitar">Criar</b-button>
                 </div>              
             </div>
 
             <div class="col-6 offset-6" v-if="tipo == 'editar'">
                 <div class="row">
-                    <b-button class="col-5 mt-3 mr-1" block @click="cancelar">Cancelar</b-button>
-                    <b-button class="col-5 mt-3 ml-1 btn-danger" block @click="atualizar">Atualizar</b-button>
+                    <b-button class="col-5 mt-3 mr-1" block @click="cancelar" :disabled="desabilitar">Cancelar</b-button>
+                    <b-button class="col-5 mt-3 ml-1 btn-danger" block @click="atualizar" :disabled="desabilitar">Atualizar</b-button>
                 </div>              
             </div>
 
-            <div class="col-6 offset-6" v-if="tipo == 'deletar'" >
+            <div class="col-6 offset-6" v-if="tipo == 'deletar'">
                 <div class="row">
-                    <b-button class="col-5 mt-3 mr-1" block @click="cancelar">Cancelar</b-button>
-                    <b-button class="col-5 mt-3 ml-1 btn-danger" block @click="deletar">Deletar</b-button>
+                    <b-button class="col-5 mt-3 mr-1" block @click="cancelar" :disabled="desabilitar">Cancelar</b-button>
+                    <b-button class="col-5 mt-3 ml-1 btn-danger" block @click="deletar" :disabled="desabilitar">Deletar</b-button>
                 </div>              
             </div>
             
@@ -67,7 +69,11 @@ export default {
     props: [
         'titulo', 'prod','idmodal', 'texto', 'tipo', 'dados'],
     data(){
-        return {};
+        return {
+            respostaText: '',
+            respostaCss: '',  
+            desabilitar: false          
+        };
     },
     computed: {
         ...mapState({
@@ -99,27 +105,64 @@ export default {
         },
         
         deletar() {
+            console.log('veio para deletar')
             this.deletarProduto();
             //store.dispatch('deletarProduto');            
             this.hideModal();
             //this.$emit('delete', 'aqui vai vir algo')
         },
         
-        atualizar() {         
-            //console.log('primeiro passou no component modal',this.nameProd, this.priceProd, this.descriptionProd);
-            this.atualizarProduto();
-            this.hideModal();
-            //console.log(ret, ' resposta ');
+        atualizar() {
+            this.desabilitar = true;         
+            
+            this.atualizarProduto((success) =>{
+
+                if(success){
+                    this.respostaCss = 'alert alert-success';
+                    this.respostaText = 'Atualizado com sucesso!';
+                    
+                    setTimeout(() => {
+                        this.hideModal();
+                        this.respostaText = "";
+                    }, 2000);  
+
+                } else {
+                    this.desabilitar = 'false';
+                    this.respostaCss = 'alert alert-danger';
+                    this.respostaText = 'Error! Verifique o console log';
+                }
+                
+            });
+
+            
+            
         },
         cancelar() {
             this.produtoCancelar();
             this.hideModal();
         },
         criar() {
-            //console.log('chamou o criar');
-            this.criarProduto(state.produto.name, state.produto.price, state.produto.description);
-            this.hideModal();
-            //console.log('criado o produto');
+            this.desabilitar = true;
+            this.criarProduto((success) =>{
+
+                if(success){
+                    this.respostaCss = 'alert alert-success';
+                    this.respostaText = 'Incluído com sucesso!';
+                    
+                    setTimeout(() => {
+                        this.hideModal();
+                        this.respostaText = "";
+                    }, 2000);  
+
+                } else {
+                    this.desabilitar = false;
+                    this.respostaCss = 'alert alert-danger';
+                    this.respostaText = 'Error! Verifique o console log';
+                }
+                
+            });
+       
+            
         }      
     }
 }

@@ -6,6 +6,9 @@ export default {
     'SET_DADOS_API'(state, payload) {
         state.dadosApi = payload;
     },
+    'SET_PRODUTO_ID'(state, payload) {
+        state.produto.id = payload;        
+    },
     'SET_PRODUTO'(state, payload) {
         state.produto.id = payload.id;
         state.produto.name = payload.name;
