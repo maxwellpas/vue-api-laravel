@@ -1,7 +1,38 @@
 <template>	
 	<div class="container">	
 		
-		
+		<modal 
+				idmodal="modal-edit" 
+				titulo="Editar Dados - Modal EDITAR" 
+				texto="Atenção ao alterar o produto"
+				tipo="editar"
+				:nameProd="nameProd"
+				:priceProd="priceProd"
+				:descriptionProd="descriptionProd"
+				>
+				</modal>
+		<modal 
+				idmodal="modal-delete" 
+				titulo="Deletando os dados- Modal DELETE" 
+				texto="Atenção! Tenha certeza que deseja excluir esse produto?"
+				tipo="deletar"	
+				:nameProd="nameProd"
+				:priceProd="priceProd"
+				:descriptionProd="descriptionProd"				
+				>
+				</modal>
+
+		<modal 
+				idmodal="modal-criar" 
+				titulo="Criando Produtos- Modal CRIAR" 
+				texto="Preencha os campos abaixo para criar o produto."				
+				tipo="criar"
+				:nameProd="nameProd"
+				:priceProd="priceProd"
+				:descriptionProd="descriptionProd"
+				>
+				</modal>
+
 		<p>Produto a ser deletado {{idProduto}}</p>
 		
 		<div class="row">
@@ -77,16 +108,7 @@ export default {
 			ordem: {
                 colunas: ['id', 'name', 'description'],
                 orientacao: ['desc', 'desc', 'desc']
-			},
-			/**
-			 * produtos: null,
-			 * token: null,
-			 * 
-			nameProd: '',
-			priceProd: '',
-			descriptionProd: ''
-			 */
-			
+			}			
 		};
 	},
 	created() {
@@ -111,18 +133,21 @@ export default {
 		loading() {
 			return store.state.loading;
 		},
-		dadosApi(){
-			
-				
+		dadosApi(){	
+			if(store.state.dadosApi == ""){
 				return store.dispatch('buscaProdutos'); 
-				//return store.getters.dadosApi;
-				//console.log(dados, 'dados da api');
-				//return dados;	
-			
-			
-		}
+			}
+
+			return store.state.dadosApi;				
+		},
+		nameProd: () => store.state.produto.name,
+		priceProd: () => store.state.produto.price,
+		descriptionProd: () => store.state.produto.description,
+		
+		
 	},
 	methods: {
+		/**
 		...mapActions([
 			'buscaProdutos', 
 			'buscaProdutosPorId', 
@@ -133,94 +158,14 @@ export default {
 			'atualizarProduto',
 			'criarProduto'
 		]),
+		 */
+		produtoEscolherEdit(payload) {
+			console.log(payload);	
+			store.dispatch('produtoEscolherEdit', payload);
+		},
 		ordenar(indice) {
             this.$set(this.ordem.orientacao, indice, this.ordem.orientacao[indice] == 'desc' ? 'asc' : 'desc')
 		},
-		/*
-		configHead() {
-			return {
-				headers: {					
-					'Authorization': 'Bearer ' + this.token
-				}
-			}
-			
-		},
-		login() {			
-			axios({
-				method: 'post', // verbo http
-				url: 'http://localhost:8001/public/api/login', // url
-				data: {
-					email: 'user@user.com',
-					password: 'secret'
-				}
-			})
-			.then(response => {
-				this.token = response.data.token;
-				
-			})
-			.finally(() => {
-				this.buscaProdutos();
-			})
-			.catch(error => {
-				console.log("Erro ao fazer login", error)
-			})
-		},
-		buscaProdutos() {
-			let config = this.configHead();
-
-			axios
-			.get(
-				'http://localhost:8001/public/api/products',
-				// bodyParameters,
-				config
-			)
-			.then( (response) => {				
-				this.produtos = response.data.data;
-
-			})
-			.finally(() => {
-				this.loading = false;
-			})
-			.catch( (error) => {
-				console.log("Erro ao buscar os produtos", error);
-
-			});
-
-		},
-		
-		buscaProdutosPorId() {
-			let config = this.configHead();
-			
-			/*let bodyParameters = {
-				"product": this.idProduto
-			}
-
-			axios
-			.get(
-				'http://localhost:8001/public/api/products/' + this.idProduto,
-				//bodyParameters,
-				config
-			)
-			.then( (response) => {
-				console.log(response.data.data, "trouxe o prodotuo por id");
-				this.nameProd = response.data.data.name;
-				this.priceProd = response.data.data.price;
-				this.descriptionProd = response.data.data.description;
-
-				console.log(this.nameProd);
-
-			})
-			.finally(() => {
-				this.loading = false;
-			})
-			.catch( (error) => {
-				console.log("Erro ao buscar os produtos", error);
-
-			});
-
-		},
-		*/
-		
 
 	}
 }

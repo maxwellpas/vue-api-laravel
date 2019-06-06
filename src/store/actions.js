@@ -62,7 +62,7 @@ export default {
 
         })
         .finally(() => {
-            state.loading = false;
+            context.state.loading = false;
         })
         .catch( (error) => {
             console.log("Erro ao buscar os produtos", error);
@@ -71,11 +71,11 @@ export default {
 
     },
 
-    buscaProdutosPorId(context) {
+    buscaProdutosPorId(context, payload) {
       
         axios
         .get(
-            'http://localhost:8001/public/api/products/' + context.state.produtos.id,
+            'http://localhost:8001/public/api/products/' + payload,
             //bodyParameters,
             {
                 headers: {					
@@ -89,7 +89,7 @@ export default {
             context.state.produtos.price = response.data.data.price;
             context.state.produtos.description = response.data.data.description;
 
-            //console.log(this.nameProd);
+            console.log(this.nameProd);
 
         })
         .finally(() => {
@@ -106,9 +106,9 @@ export default {
         context.commit('SET_PRODUTO_ID', item);        
 
     },
-    produtoEscolherEdit(context, item) {
-        context.commit('SET_PRODUTO_ID', item);        
-        context.dispatch('buscaProdutosPorId');
+    produtoEscolherEdit(context, payload) {
+        //context.commit('SET_PRODUTO_ID', payload);        
+        context.dispatch('buscaProdutosPorId', payload);
 
     },
     produtoCancelar(context) {
@@ -116,7 +116,7 @@ export default {
         //console.log('Cancelando o produto', this.idProduto);
 
     },
-    deletarProduto(){
+    deletarProduto(context){
         
         let bodyParameters = {
             "_method" : 'DELETE'
@@ -144,7 +144,7 @@ export default {
 
         });
     },
-    atualizarProduto(name, price, description) {
+    atualizarProduto(context, name, price, description) {
         //console.log('chegou no APP', name, price, description);			        
 
         let bodyParameters = {

@@ -58,7 +58,7 @@
 <script>
 
 import store from '../store/store';
-import { mapActions } from 'vuex';
+import { mapActions } from 'vuex'
 
 export default {
     
@@ -67,18 +67,15 @@ export default {
         'titulo', 'prod','idmodal', 'texto', 'tipo', 'dados'],
     data(){
         return {
-            /*
             nameProd: '',
             priceProd: '',
             descriptionProd: ''
-            */
-
         };
     },
     computed: {
-        nameProd: state => state.produto.name,
-        descriptionProd: state => state.produto.description,
-        priceProd: state => state.produto.price       
+        name: state => store.state.produto.name,
+        description: state => store.state.produto.description,
+        price: state => store.state.produto.price       
     },
     beforeMount() {
 		//console.log('before mount', this)
@@ -87,16 +84,18 @@ export default {
     inject: ['deletarProd'], Não é preciso fazer injeção de métodos ou funcoes porque usamos o $parent
     */
     methods: {
+    
         ...mapActions([
 			'buscaProdutos', 
 			'buscaProdutosPorId', 
 			'produtoEscolher', 
-			'produtoEscolherEdit', 
-			'produtoCancelar', 
-			'deletarProduto',
-			'atualizarProduto',
-			'criarProduto'
-		]),
+			'produtoEscolherEdit'
+			//'produtoCancelar', 
+			//'deletarProduto',
+			//'atualizarProduto',
+//			'criarProduto'
+        ]),
+    
         showModal() {
             this.$refs['my-modal'].show();
             //console.log('modal do deletar');
@@ -107,23 +106,23 @@ export default {
         },
         
         deletar() {
-            this.deletarProduto();            
+            store.dispatch('deletarProduto');            
             this.hideModal();
             //this.$emit('delete', 'aqui vai vir algo')
         },
         atualizar() {         
             //console.log('primeiro passou no component modal',this.nameProd, this.priceProd, this.descriptionProd);
-            this.atualizarProduto(state.produto.name, state.produto.price, state.produto.description);
+            store.dispatch('atualizarProduto', state.produto.name, state.produto.price, state.produto.description);
             this.hideModal();
             //console.log(ret, ' resposta ');
         },
         cancelar() {
-            this.produtoCancelar();
+            store.dispatch('produtoCancelar');
             this.hideModal();
         },
         criar() {
             //console.log('chamou o criar');
-            this.criarProduto(state.produto.name, state.produto.price, state.produto.description);
+            store.dispatch('criarProduto', state.produto.name, state.produto.price, state.produto.description);
             this.hideModal();
             //console.log('criado o produto');
         }      
