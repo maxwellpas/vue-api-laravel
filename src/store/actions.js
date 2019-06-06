@@ -102,16 +102,16 @@ export default {
 
     },
 
-    produtoEscolher(item) {
+    produtoEscolher(context, item) {
         context.commit('SET_PRODUTO_ID', item);        
 
     },
-    produtoEscolherEdit(item) {
+    produtoEscolherEdit(context, item) {
         context.commit('SET_PRODUTO_ID', item);        
         context.dispatch('buscaProdutosPorId');
 
     },
-    produtoCancelar() {
+    produtoCancelar(context) {
         context.commit('SET_PRODUTO_ID', '');        
         //console.log('Cancelando o produto', this.idProduto);
 
