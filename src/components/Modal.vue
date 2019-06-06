@@ -57,31 +57,46 @@
 
 <script>
 
-import store from '../store';
+import store from '../store/store';
+import { mapActions } from 'vuex';
 
 export default {
     
 
     props: [
-        'titulo', 'prod','idmodal', 'texto', 'tipo', 'dados', 'nameProd', 'descriptionProd', 'priceProd'],
+        'titulo', 'prod','idmodal', 'texto', 'tipo', 'dados'],
     data(){
         return {
+            /*
             nameProd: '',
             priceProd: '',
             descriptionProd: ''
+            */
 
         };
     },
     computed: {
-       
+        nameProd: state => state.produto.name,
+        descriptionProd: state => state.produto.description,
+        priceProd: state => state.produto.price       
     },
     beforeMount() {
-		console.log('before mount', this)
+		//console.log('before mount', this)
 	},
     /*
     inject: ['deletarProd'], Não é preciso fazer injeção de métodos ou funcoes porque usamos o $parent
     */
     methods: {
+        ...mapActions([
+			'buscaProdutos', 
+			'buscaProdutosPorId', 
+			'produtoEscolher', 
+			'produtoEscolherEdit', 
+			'produtoCancelar', 
+			'deletarProduto',
+			'atualizarProduto',
+			'criarProduto'
+		]),
         showModal() {
             this.$refs['my-modal'].show();
             //console.log('modal do deletar');
@@ -92,23 +107,23 @@ export default {
         },
         
         deletar() {
-            this.$parent.deletarProduto();            
+            this.deletarProduto();            
             this.hideModal();
             //this.$emit('delete', 'aqui vai vir algo')
         },
         atualizar() {         
             //console.log('primeiro passou no component modal',this.nameProd, this.priceProd, this.descriptionProd);
-            this.$parent.atualizarProduto(this.nameProd, this.priceProd, this.descriptionProd);
+            this.atualizarProduto(state.produto.name, state.produto.price, state.produto.description);
             this.hideModal();
             //console.log(ret, ' resposta ');
         },
         cancelar() {
-            this.$parent.produtoCancelar();
+            this.produtoCancelar();
             this.hideModal();
         },
         criar() {
             //console.log('chamou o criar');
-            this.$parent.criarProduto(this.nameProd, this.priceProd, this.descriptionProd);
+            this.criarProduto(state.produto.name, state.produto.price, state.produto.description);
             this.hideModal();
             //console.log('criado o produto');
         }      

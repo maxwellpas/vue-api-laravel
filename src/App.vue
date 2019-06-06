@@ -1,30 +1,6 @@
 <template>	
-	<div class="container">		
-		<modal 
-				idmodal="modal-edit" 
-				titulo="Editar Dados - Modal EDITAR" 
-				texto="Atenção ao alterar o produto"
-				tipo="editar"
-				:nameProd="nameProd"
-				:priceProd="priceProd"
-				:descriptionProd="descriptionProd"
-				>
-				</modal>
-		<modal 
-				idmodal="modal-delete" 
-				titulo="Deletando os dados- Modal DELETE" 
-				texto="Atenção! Tenha certeza que deseja excluir esse produto?"
-				tipo="deletar"					
-				>
-				</modal>
-
-		<modal 
-				idmodal="modal-criar" 
-				titulo="Criando Produtos- Modal CRIAR" 
-				texto="Preencha os campos abaixo para criar o produto."				
-				tipo="criar"
-				>
-				</modal>				
+	<div class="container">	
+		
 		
 		<p>Produto a ser deletado {{idProduto}}</p>
 		
@@ -87,30 +63,36 @@
 <script>
 import axios from 'axios';
 import _ from 'lodash';
-import store from './store';
+import store from './store/store';
+
+import { mapActions } from 'vuex'
 
 export default {
 	//props: ['proddel'],
 	data() {
 		return {			
 			info: null,
-			produtos: null,
-			token: null,
-			busca: '',
+			busca: '',		
 			idProduto: '',
 			ordem: {
                 colunas: ['id', 'name', 'description'],
                 orientacao: ['desc', 'desc', 'desc']
 			},
+			/**
+			 * produtos: null,
+			 * token: null,
+			 * 
 			nameProd: '',
 			priceProd: '',
 			descriptionProd: ''
+			 */
 			
 		};
 	},
 	created() {
 		store.dispatch('login');	
-		console.log('created app', produtos);
+		///this.login();
+		//console.log('created app', produtos);
 	},	
 	provide() {
 		return {};
@@ -129,11 +111,28 @@ export default {
 		loading() {
 			return store.state.loading;
 		},
-		dadosApi(){			
-			return store.getters.dadosApi;
+		dadosApi(){
+			
+				
+				return store.dispatch('buscaProdutos'); 
+				//return store.getters.dadosApi;
+				//console.log(dados, 'dados da api');
+				//return dados;	
+			
+			
 		}
 	},
 	methods: {
+		...mapActions([
+			'buscaProdutos', 
+			'buscaProdutosPorId', 
+			'produtoEscolher', 
+			'produtoEscolherEdit', 
+			'produtoCancelar', 
+			'deletarProduto',
+			'atualizarProduto',
+			'criarProduto'
+		]),
 		ordenar(indice) {
             this.$set(this.ordem.orientacao, indice, this.ordem.orientacao[indice] == 'desc' ? 'asc' : 'desc')
 		},
@@ -188,13 +187,13 @@ export default {
 			});
 
 		},
-		*/
+		
 		buscaProdutosPorId() {
 			let config = this.configHead();
 			
 			/*let bodyParameters = {
 				"product": this.idProduto
-			}*/
+			}
 
 			axios
 			.get(
@@ -220,110 +219,8 @@ export default {
 			});
 
 		},
-		produtoEscolher(item) {
-			this.idProduto = item;			
-
-		},
-		produtoEscolherEdit(item) {
-			this.idProduto = item;
-			this.buscaProdutosPorId();
-
-		},
-		produtoCancelar() {
-			this.idProduto = '';			
-			console.log('Cancelando o produto', this.idProduto);
-
-		},
-		deletarProduto(){
-			let config = this.configHead();
-
-			let bodyParameters = {
-				"_method" : 'DELETE'
-			}
-
-			axios
-			.post(
-				'http://localhost:8001/public/api/products/' + this.idProduto,
-				bodyParameters,
-				config
-			)
-			.then( (response) => {
-				console.log(this.idProduto, 'delentando depois da confirmaçcão');				
-				this.buscaProdutos();
-				//this.produtos = response.data.data;
-				//this.$emit('deletar', true);
-
-			})
-			.catch( (error) => {
-				console.log(error);
-
-			});
-		},
-		atualizarProduto(name, price, description) {
-			//console.log('chegou no APP', name, price, description);			
-			
-			let config = this.configHead();
-
-			let bodyParameters = {
-				"_method": "PUT",
-				"name" : name,
-				"price": price,
-				"description": description
-			}
-
-			axios
-			.post(
-				'http://localhost:8001/public/api/products/' + this.idProduto,
-				bodyParameters,
-				config
-			)
-			.then( (response) => {
-				//console.log(this.idProduto, 'atualizando o produto');				
-				this.buscaProdutos();
-				
-				//this.$emit('atualizarProduto', 'ALTERADO MAX');
-				//this.produtos = response.data.data;
-
-			})
-			.catch( (error) => {
-				console.log(error);
-
-			});
-		},
-		criarProduto(name, price, description) {
-			let config = this.configHead();
-
-			let bodyParameters = {
-				//"_method": "POST",
-				"name" : name,
-				"price": price,
-				"description": description
-			}
-
-			console.log(config, bodyParameters);
-
-
-			axios
-			.post(
-				'http://localhost:8001/public/api/products',
-				bodyParameters,
-				config
-			)
-			.then( (response) => {
-				console.log('Produto criado | APP');				
-				this.buscaProdutos();
-				
-				//this.$emit('atualizarProduto', 'ALTERADO MAX');
-				//this.produtos = response.data.data;
-
-			})
-			.catch( (error) => {
-				console.log(error);
-
-			});
-
-
-		}
+		*/
+		
 
 	}
 }
