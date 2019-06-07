@@ -57,10 +57,15 @@ export default {
             desabilitar: false       
         };
     },
+    created() {
+        
+        store.commit('SET_PRODUTO', ''); // setando os dados do produto buscado por id                  
+        
+    },
     computed: {
         ...mapState({
             produto: state => state.produto // foi mapeado do state do store e deopis chamado direto do formulário
-        }),      
+        })        
     },
     methods: {
         ...mapActions([				                        
