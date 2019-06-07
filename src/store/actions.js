@@ -101,6 +101,10 @@ export default {
         //console.log('Cancelando o produto', this.idProduto);
 
     },
+    produtoLimpar(context) {
+        context.commit('SET_PRODUTO_LIMPAR', '');                
+
+    },
     deletarProduto(context){
             
         let bodyParameters = {
