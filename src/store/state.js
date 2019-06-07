@@ -1,4 +1,5 @@
 export default {
+    desabilitar: true,
     loading: '',
     token: '',
     dadosApi: [],

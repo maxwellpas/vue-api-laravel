@@ -60,8 +60,7 @@ export default {
 
     },
 
-    buscaProdutosPorId(context, payload) {
-      
+    buscaProdutosPorId(context, payload) {                
         axios
         .get(
             'http://localhost:8001/public/api/products/' + payload,
@@ -72,15 +71,16 @@ export default {
                 }
             }
         )
-        .then( (response) => {
+        .then( (response) => {            
             //console.log(response.data.data, "trouxe o prodotuo por id");
             context.commit('SET_PRODUTO', response.data.data); // setando os dados do produto buscado por id            
+            context.commit('SET_DESABILITAR', false);
 
         })
         .finally(() => {
             context.state.loading = false;
         })
-        .catch( (error) => {
+        .catch( (error) => {            
             console.log("Erro ao buscar os produtos", error);
 
         });

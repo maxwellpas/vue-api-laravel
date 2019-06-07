@@ -79,6 +79,15 @@
 							<td>{{ prod.description }}</td>
 							<td>{{ prod.price }}</td>
 							<td class="text-center">
+								<router-link tag="button" class="btn btn-secondary mr-1" 
+									:to="{ 
+											path: '/product/edit/' + prod.id,
+											params: {id: prod.id}
+										}
+									">
+									edit - blank
+								</router-link>
+								
 								<button class="btn btn-secondary mr-1" @click="escolherEdit(prod.id)" v-b-modal.modal-edit>edit</button>
 								<button class="btn btn-danger" @click="escolherId(prod.id)" v-b-modal.modal-delete>delete</button>
 							</td>

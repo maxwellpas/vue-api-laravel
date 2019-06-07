@@ -1,5 +1,8 @@
 export default {
 
+    'SET_DESABILITAR'(state, payload) {
+        state.desabilitar = payload;
+    },
     'SET_TOKEN'(state, payload) {
         state.token = payload;
     },

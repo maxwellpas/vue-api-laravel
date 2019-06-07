@@ -7,5 +7,5 @@ export default [
     { path: '/', component: PaginaIndex },
     { path: '/login', component: PaginaLogin },
     { path: '/product/create', component: PaginaProductCreate },
-    { path: '/product/edit', component: PaginaEditCreate }
+    { path: '/product/edit/:id', component: PaginaEditCreate }
 ]
